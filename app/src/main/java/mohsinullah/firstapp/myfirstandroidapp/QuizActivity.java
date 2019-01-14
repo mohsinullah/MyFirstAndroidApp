@@ -19,12 +19,12 @@ public class QuizActivity extends AppCompatActivity {
     private TextView mQuestionTextView;
 
     private Question[] mQuestionBank = new Question[] {
-            new Question(R.string.question_australia, true),
-            new Question(R.string.question_oceans, true),
-            new Question(R.string.question_mideast, false),
-            new Question(R.string.question_africa, false),
-            new Question(R.string.question_americas, true),
-            new Question(R.string.question_asia, true),
+            new Question(R.string.question_australia, true, false),
+            new Question(R.string.question_oceans, true, false),
+            new Question(R.string.question_mideast, false, false),
+            new Question(R.string.question_africa, false, false),
+            new Question(R.string.question_americas, true, false),
+            new Question(R.string.question_asia, true, false),
     };
 
     private int mCurrentIndex = 0;
@@ -42,23 +42,30 @@ public class QuizActivity extends AppCompatActivity {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX,0);
         }
         mQuestionTextView =  findViewById(R.id.question_text_view);
+        mTrueButton = findViewById(R.id.true_button);
+        mFalseButton =  findViewById(R.id.false_button);
         updateQuestion();
 
-        mTrueButton = findViewById(R.id.true_button);
-        mTrueButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                checkAnswer(true);
-            }
-        });
+        Log.d(TAG,"Question answered is: " + mQuestionBank[mCurrentIndex].isAnswered());
 
-        mFalseButton =  findViewById(R.id.false_button);
-        mFalseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkAnswer(false);
-            }
-        });
+
+
+        if (mTrueButton.isEnabled()) {
+            mTrueButton.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    checkAnswer(true);
+                    disableButtons();
+                }
+            });
+            mFalseButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    checkAnswer(false);
+                    disableButtons();
+                }
+            });
+        }
 
         mNextButton =  findViewById(R.id.next_button);
         mNextButton.setOnClickListener(new View.OnClickListener(){
@@ -66,6 +73,7 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
                 updateQuestion();
+
             }
         });
 
@@ -131,9 +139,18 @@ public class QuizActivity extends AppCompatActivity {
     private void updateQuestion() {
         int question = mQuestionBank[mCurrentIndex].getTextResId();
         mQuestionTextView.setText(question);
+        Log.d(TAG,"Question " + mCurrentIndex + " answered: " + mQuestionBank[mCurrentIndex].isAnswered());
+        disableButtons();
+    }
+
+    private void disableButtons() {
+        mTrueButton.setEnabled(!(mQuestionBank[mCurrentIndex].isAnswered()));
+        mFalseButton.setEnabled(!(mQuestionBank[mCurrentIndex].isAnswered()));
     }
 
     private void checkAnswer(boolean userPressedTrue) {
+        mQuestionBank[mCurrentIndex].setAnswered(true);
+
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
 
         int messageResId;
@@ -143,6 +160,7 @@ public class QuizActivity extends AppCompatActivity {
         } else {
             messageResId = R.string.incorrect_toast;
         }
+
 
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
     }
