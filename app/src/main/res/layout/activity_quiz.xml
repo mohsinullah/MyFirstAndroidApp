@@ -49,7 +49,6 @@
             android:src="@drawable/arrow_right"
             android:contentDescription="@string/next_button"/>
 
-
     </LinearLayout>
 
 </LinearLayout>
