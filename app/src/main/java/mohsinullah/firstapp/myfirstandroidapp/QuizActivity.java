@@ -28,6 +28,8 @@ public class QuizActivity extends AppCompatActivity {
     };
 
     private int mCurrentIndex = 0;
+    private int mScore = 0;
+    private int mNumberAnswered = 0;
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
@@ -49,7 +51,6 @@ public class QuizActivity extends AppCompatActivity {
         Log.d(TAG,"Question answered is: " + mQuestionBank[mCurrentIndex].isAnswered());
 
 
-
         if (mTrueButton.isEnabled()) {
             mTrueButton.setOnClickListener(new View.OnClickListener(){
                 @Override
@@ -66,6 +67,8 @@ public class QuizActivity extends AppCompatActivity {
                 }
             });
         }
+
+
 
         mNextButton =  findViewById(R.id.next_button);
         mNextButton.setOnClickListener(new View.OnClickListener(){
@@ -150,19 +153,28 @@ public class QuizActivity extends AppCompatActivity {
 
     private void checkAnswer(boolean userPressedTrue) {
         mQuestionBank[mCurrentIndex].setAnswered(true);
-
+        mNumberAnswered += 1;
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
 
         int messageResId;
 
         if (userPressedTrue == answerIsTrue){
             messageResId = R.string.correct_toast;
+            mScore += 1;
         } else {
             messageResId = R.string.incorrect_toast;
         }
 
-
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
+
+        mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+        updateQuestion();
+
+        if (mNumberAnswered == mQuestionBank.length) {
+            Toast.makeText(this,
+                    "You answered " + (int)(((float)mScore/mQuestionBank.length)*100) + "% correct",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
 

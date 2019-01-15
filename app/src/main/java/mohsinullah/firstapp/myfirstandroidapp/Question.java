@@ -5,6 +5,7 @@ public class Question {
     private int mTextResId;
     private boolean mAnswerTrue;
     private boolean mIsAnswered;
+    private boolean correct;
 
 
     public int getTextResId() {
@@ -32,7 +33,6 @@ public class Question {
     }
 
     public Question(int textResId, boolean answerTrue, boolean isAnswered) {
-
         mTextResId = textResId;
         mAnswerTrue = answerTrue;
         mIsAnswered = isAnswered;
